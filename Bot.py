@@ -1,33 +1,19 @@
-import logging
-import re
+from Jokes import read_text_file
+import discord
+from discord.ext import commands 
+from DatabaseConfig import BOT_TOKEN
 
-def read_text_file(filename):
-    try:
-        with open(filename, 'r', encoding='utf-8') as file:
-            text = file.read()  # Read the entire file into a string
-            
-            # Use regular expression to match the patterns for jokes and punchlines
-            joke_punchline_pairs = re.findall(r'(.+?)[?.!] (.+)', text)
-            
-            # Separate the jokes and punchlines into two lists
-            jokes, punchlines = zip(*joke_punchline_pairs)
-            
-            # Join the jokes and punchlines using newline characters
-            jokes_with_newlines = '\n'.join(jokes)
-            punchlines_with_newlines = '\n'.join(punchlines)
-            
-            print("Jokes:")
-            print(jokes_with_newlines)
-            print("\nPunchlines:")
-            print(punchlines_with_newlines)
-            
-    except FileNotFoundError:
-        print("File not found.")
+intents = discord.Intents.all()
+intents.messages = True
+intents.guilds = True
+bot = commands.Bot(command_prefix='!', intents=intents)
 
-def main():
+@bot.event
+async def on_ready():
+    filenames = ["Jokes/300RandomJokes.txt", "Jokes/DarkHumorJokes.txt"]
+    
+    for filename in filenames:
+        read_text_file(filename)
 
-    filename = "Jokes.txt"
-    read_text_file(filename)
 
-if __name__ == "__main__":
-    main()
+bot.run(BOT_TOKEN)

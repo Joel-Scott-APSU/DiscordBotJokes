@@ -167,3 +167,6 @@ venv/
 
 #Ignore all text files 
 *.txt
+
+#Ignore the jokes folder 
+/Jokes/
