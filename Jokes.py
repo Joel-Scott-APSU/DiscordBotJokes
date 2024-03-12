@@ -1,5 +1,6 @@
 import re
 from DatabaseConfig import connect_to_database
+import os
 
 db_cursor, db_connection = connect_to_database()
 
@@ -9,11 +10,11 @@ def read_text_file(filename):
             text = file.read()  # Read the entire file into a string
             
             # Use regular expression to match the patterns for jokes and punchlines
-            
-            if filename == 'jokes.txt':
+            filename = os.path.basename(filename)
+            if filename == '300RandomJokes.txt':
                 joke_punchline_pairs = re.findall(r'\d+\. (.+?[?.!]) (.+)', text)
                 table_name = 'alljokes'
-            elif filename == 'darkhumor.txt':
+            elif filename == 'DarkHumorJokes.txt':
                 joke_punchline_pairs = re.findall(r'\d+\.\s*(.+)', text)
                 table_name = 'darkhumor'
             else:
@@ -32,3 +33,14 @@ def read_text_file(filename):
         print("File not found.")
     except Exception as e:
         print(f"There was an error adding files to the database: {e}")
+
+def read_jokes(table):
+    db_cursor = db_connection.cursor()
+
+    db_cursor.execute(f"SELECT * FROM {table} ORDER BY RAND() LIMIT 1")
+    joke = db_cursor.fetchone()
+    
+    db_cursor.close()
+    db_connection.close()
+
+    return joke
